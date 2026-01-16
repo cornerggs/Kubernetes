@@ -15,12 +15,7 @@ Encadré par : **Mr Hervé Tondeur**
 
 ## Objectif du projet
 
-Créer un système de messagerie distribuée basé sur Kafka où :
-- Des clients s’enregistrent et échangent des messages
-- Chaque message est automatiquement traduit en français
-- Les connexions et tous les messages sont archivés dans PostgreSQL
-- L’interaction se fait via un client en ligne de commande interactif
-
+L’objectif de cette première étape est de prendre en main l’environnement Kubernetes via Minikube et kubectl, de vérifier son bon fonctionnement et de manipuler les ressources de base (pods, services, images).
 ---
 
 ## Technologies utilisées
@@ -88,8 +83,5 @@ echo "http://${MINIKUBE_IP}:30080"
 
 ```
 
-Test réseau depuis `shellclient`:
 
-```bash
-kubectl -n etudiants exec deployment/shellclient -- sh -lc 'nc -vz -w 2 kafka 9092; nc -vz -w 2 zookeeper 2181; nc -vz -w 2 postgres 5432'
 ```
