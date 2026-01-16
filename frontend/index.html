@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gestion Étudiants</title>
+</head>
+<body>
+  <h1>Ajouter étudiant</h1>
+
+  <input id="nom" placeholder="Nom">
+  <input id="prenom" placeholder="Prénom">
+  <button onclick="ajouter()">Ajouter</button>
+
+  <h2>Liste</h2>
+  <ul id="liste"></ul>
+
+<script>
+function ajouter() {
+  fetch("/api/etudiants", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      nom: nom.value,
+      prenom: prenom.value
+    })
+  });
+}
+
+function charger() {
+  fetch("/db/etudiants")
+    .then(r => r.json())
+    .then(data => {
+      liste.innerHTML = "";
+      data.forEach(e => {
+        liste.innerHTML += `<li>${e.nom} ${e.prenom}</li>`;
+      });
+    });
+}
+setInterval(charger, 2000);
+</script>
+</body>
+</html>

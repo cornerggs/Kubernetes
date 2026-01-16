@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shellclient
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shellclient
+  template:
+    metadata:
+      labels:
+        app: shellclient
+    spec:
+      containers:
+        - name: shellclient
+          image: shellclient:1.0
+          imagePullPolicy: IfNotPresent
+          command: ["sleep", "infinity"]
+

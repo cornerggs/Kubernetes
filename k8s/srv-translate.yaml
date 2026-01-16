@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: srv-translate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: srv-translate
+  template:
+    metadata:
+      labels:
+        app: srv-translate
+    spec:
+      containers:
+        - name: srv-translate
+          image: srv-translate:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+

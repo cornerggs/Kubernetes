@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-backend
+  namespace: etudiants
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-backend
+  template:
+    metadata:
+      labels:
+        app: web-backend
+    spec:
+      containers:
+        - name: web-backend
+          image: web-backend:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          env:
+            - name: POSTGRES_HOST
+              value: postgres
+            - name: POSTGRES_DB
+              value: etudiants
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-backend
+  namespace: etudiants
+spec:
+  selector:
+    app: web-backend
+  ports:
+    - port: 5000
+      targetPort: 5000

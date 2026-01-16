@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cons-db-srv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cons-db-srv
+  template:
+    metadata:
+      labels:
+        app: cons-db-srv
+    spec:
+      containers:
+        - name: cons-db-srv
+          image: cons-db-srv:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+

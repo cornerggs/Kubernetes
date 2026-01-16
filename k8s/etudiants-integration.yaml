@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: integration
+  namespace: etudiants
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: integration
+  template:
+    metadata:
+      labels:
+        app: integration
+    spec:
+      containers:
+        - name: integration
+          image: integration:1.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka:9092
+            - name: KAFKA_TOPIC
+              value: etudiants
+            - name: POSTGRES_HOST
+              value: postgres
+            - name: POSTGRES_DB
+              value: etudiants
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
