@@ -124,3 +124,88 @@ Voici une démonstration complète du fonctionnement de notre projet de messager
 # Kubernetes
 # Kubernetes
 # Kubernetes
+
+## Kubernetes / Minikube — Application Étudiants (EDA)
+
+### Prérequis
+
+```bash
+minikube start
+kubectl cluster-info
+```
+
+### Build des images (dans l’environnement Docker de Minikube)
+
+```bash
+eval "$(minikube -p minikube docker-env)"
+
+docker build -t backend:1.0 ./backend
+docker build -t integration:1.0 ./integration
+docker build -t web-backend:1.0 ./web-backend
+docker build -t frontend:1.0 ./frontend
+```
+
+### Déploiement Kubernetes
+
+```bash
+kubectl apply -f k8s/etudiants-namespace.yaml
+
+kubectl apply -f k8s/etudiants-postgres.yaml
+kubectl apply -f k8s/etudiants-zookeeper.yaml
+kubectl apply -f k8s/etudiants-kafka.yaml
+
+kubectl apply -f k8s/etudiants-backend.yaml
+kubectl apply -f k8s/etudiants-integration.yaml
+kubectl apply -f k8s/etudiants-web-backend.yaml
+kubectl apply -f k8s/etudiants-frontend.yaml
+```
+
+Vérifier l’état:
+
+```bash
+kubectl -n etudiants get pods -o wide
+kubectl -n etudiants get svc -o wide
+```
+
+### Accès au frontend
+
+```bash
+MINIKUBE_IP=$(minikube ip)
+echo "http://${MINIKUBE_IP}:30080"
+```
+
+### Tests E2E rapides (sans navigateur)
+
+POST (envoi vers Kafka via backend):
+
+```bash
+MINIKUBE_IP=$(minikube ip)
+curl -i -X POST "http://${MINIKUBE_IP}:30080/api/etudiants" \
+  -H "Content-Type: application/json" \
+  -d '{"nom":"Dupont","prenom":"Alice"}'
+```
+
+GET (lecture depuis Postgres via web-backend):
+
+```bash
+MINIKUBE_IP=$(minikube ip)
+curl -sS "http://${MINIKUBE_IP}:30080/db/etudiants" | jq .
+```
+
+### Debug (si quelque chose ne démarre pas)
+
+```bash
+kubectl -n etudiants describe pod <pod>
+kubectl -n etudiants logs deployment/kafka --tail=200
+kubectl -n etudiants logs deployment/zookeeper --tail=200
+kubectl -n etudiants logs deployment/backend --tail=200
+kubectl -n etudiants logs deployment/integration --tail=200
+kubectl -n etudiants logs deployment/web-backend --tail=200
+kubectl -n etudiants logs deployment/frontend --tail=200
+```
+
+Test réseau depuis `shellclient`:
+
+```bash
+kubectl -n etudiants exec deployment/shellclient -- sh -lc 'nc -vz -w 2 kafka 9092; nc -vz -w 2 zookeeper 2181; nc -vz -w 2 postgres 5432'
+```
